@@ -6,17 +6,16 @@ import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
-function Signup() {
+function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
+
   const [password, setPassword] = useState("");
 
   useEffect(() => {
     // Check if user data exists in localStorage
     const userDataFromStorage = JSON.parse(localStorage.getItem("user"));
     if (userDataFromStorage) {
-      setName(userDataFromStorage.name);
       setEmail(userDataFromStorage.email);
       setPassword(userDataFromStorage.password);
     }
@@ -24,21 +23,20 @@ function Signup() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent page reload
-    console.log(`${name} ${email} ${password}`);
-  
+    console.log(` ${email} ${password}`);
+
     const userData = {
-      name: name,
       email: email,
       password: password,
     };
-  
+
     axios
-      .post("http://localhost:8000/signup", userData)
+      .post("http://localhost:8000/login", userData)
       .then((response) => {
         const userDataFromServer = response.data;
-        if (userDataFromServer && userDataFromServer._id) { 
-          console.log("Signup successful. User ID:", userDataFromServer._id);
-          localStorage.setItem("user", JSON.stringify(userDataFromServer));
+        if (userDataFromServer && userDataFromServer.name) {
+          console.log("Login successful. User:", userDataFromServer);
+          localStorage.setItem("user", JSON.stringify(userData));
           window.location.reload();
           navigate("/");
         }
@@ -47,7 +45,6 @@ function Signup() {
         console.log("Error:", error);
       });
   };
-  
 
   return (
     <>
@@ -56,24 +53,24 @@ function Signup() {
         type="button"
         className="btn btn-primary mx-2"
         data-bs-toggle="modal"
-        data-bs-target="#signupModal"
+        data-bs-target="#loginModal"
       >
-        Sign up
+        Login
       </button>
 
       {/* Modal */}
       <div
         className="modal fade"
-        id="signupModal"
+        id="loginModal"
         tabIndex="-1"
-        aria-labelledby="signupModalLabel"
+        aria-labelledby="loginModalLabel"
         aria-hidden="true"
       >
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h1 className="modal-title fs-3" id="signupModalLabel">
-                Sign up
+              <h1 className="modal-title fs-3" id="loginModalLabel">
+                Login
               </h1>
               <button
                 type="button"
@@ -87,19 +84,6 @@ function Signup() {
 
             <div className="modal-body p-5 ">
               <form onSubmit={handleSubmit}>
-                <div className="form-floating mb-3">
-                  <input
-                    type="name"
-                    className="form-control rounded-3"
-                    id="floatingInput"
-                    placeholder="name"
-                    value={name}
-                    onChange={(e) => {
-                      setName(e.target.value);
-                    }}
-                  />
-                  <label htmlFor="floatingInput">Name</label>
-                </div>
                 <div className="form-floating mb-3">
                   <input
                     type="email"
@@ -131,26 +115,14 @@ function Signup() {
                   type="submit"
                   data-bs-dismiss="modal"
                 >
-                  Sign up
+                  Login
                 </button>
                 <small className="text-body-secondary">
-                  By clicking Sign up, you agree to the terms of use.
+                  By clicking Login, you agree to the terms of use.
                 </small>
               </form>
             </div>
             {/* signup body */}
-            {/* <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Close
-              </button>
-              <button type="button" className="btn btn-primary">
-                Save
-              </button>
-            </div> */}
           </div>
         </div>
       </div>
@@ -158,4 +130,4 @@ function Signup() {
   );
 }
 
-export default Signup;
+export default Login;
